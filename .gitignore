@@ -10,6 +10,7 @@
 
 # production
 /build
+/cart-db
 
 # misc
 .DS_Store
