@@ -15,7 +15,6 @@ export class ProductsProvider extends Component {
         this.addCartProduct = this.addCartProduct.bind(this);
         this.subCartProduct = this.subCartProduct.bind(this);
         this.delCartProduct = this.delCartProduct.bind(this);
-        this.checkAmout = this.checkAmout.bind(this);
       }
       componentDidMount(){
         const datalink = "http://localhost:3000/products"
@@ -66,11 +65,13 @@ export class ProductsProvider extends Component {
               })
       }
       subCartProduct(product){
-        const { cartItems } = this.state;
-        const cartId = cartItems.map(item => item.id);
-        const indexProduct = cartId.indexOf(product.id);
-        const { amount } = cartItems[indexProduct];
-          this.setState({
+          this.setState(state => {
+            const { cartItems } = state;
+            const cartId = cartItems.map(item => item.id);
+            const indexProduct = cartId.indexOf(product.id);
+            const { amount } = cartItems[indexProduct];
+            if(amount < 1)  this.delCartProduct(product)
+            return {
             cartItems: [
                 ...cartItems.slice(0,indexProduct),
                 {
@@ -79,16 +80,16 @@ export class ProductsProvider extends Component {
                 },
                 ...cartItems.slice(indexProduct + 1)
             ]
-          }, () => this.checkAmout(product));
-          
+            }
+          })
+          this.setState(state => {
+            const { cartItems } = state;
+            const cartId = cartItems.map(item => item.id);
+            const indexProduct = cartId.indexOf(product.id);
+            const { amount } = cartItems[indexProduct];
+            if(amount <= 0)  this.delCartProduct(product);
+          })
       }
-      checkAmout(product){
-        const { cartItems } = this.state;
-        const cartId = cartItems.map(item => item.id);
-        const indexProduct = cartId.indexOf(product.id);
-        const { amount } = cartItems[indexProduct];
-        if(amount <= 0)  this.delCartProduct(product)
-      } 
       delCartProduct(product){
         const { cartItems } = this.state;
         const cartId = cartItems.map(item => item.id);
